@@ -10,22 +10,34 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/Gerenciador-Tarefas")
 public class TaskController {
 
-    // 1. Declare como final para garantir que nunca mude
     private final TaskService taskService;
 
-    // 2. O CONSTRUTOR É O SEGREDO!
-    // É aqui que o Spring injeta o Service. Sem isso, a variável fica null.
     public TaskController(TaskService taskService) {
         this.taskService = taskService;
     }
 
     @PostMapping
-    public ResponseEntity<TaskDto> addNewTask(@RequestBody TaskDto novaTarefa){
+    public ResponseEntity<String> addNewTask(@RequestBody TaskDto novaTarefa){
 
         // Agora taskService não é mais null, então essa linha vai funcionar
         TaskDto newTask = taskService.adicionarTarefa(novaTarefa);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(newTask);
+        String mensagem = "A tarefa " + novaTarefa.getTitulo() + " foi adicionada com sucesso";
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(mensagem);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteByTask (@PathVariable Long id){
+        taskService.deleteTask(id);
+
+        return ResponseEntity.ok("A task " + id + "foi deletada com sucesso");
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateByTask(@PathVariable Long id, @RequestBody TaskDto updateTask){
+        taskService.updateTask(id, updateTask);
+
+        return ResponseEntity.ok("A task " + updateTask.getTitulo() + " foi atualizada com sucesso");
+     }
 }

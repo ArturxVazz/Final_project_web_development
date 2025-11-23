@@ -2,12 +2,15 @@ package Tarefas.GerenciadorDeTarefas.Service;
 
 import Tarefas.GerenciadorDeTarefas.Dto.TaskDto;
 import Tarefas.GerenciadorDeTarefas.Entity.TaskEntity;
+import Tarefas.GerenciadorDeTarefas.Exception.TaskException;
 import Tarefas.GerenciadorDeTarefas.Repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class TaskService {
@@ -30,12 +33,23 @@ public class TaskService {
         return taskDto;
     }
 
-    public TaskDto updateTask (TaskDto taskDto){
-        return null;
+    public void updateTask (Long id, TaskDto taskDto){
+
+        TaskEntity updateTask = taskRepository.findById(id).orElse(null);
+
+        updateTask.setTitulo(taskDto.getTitulo());
+        updateTask.setResponsavel(taskDto.getResponsavel());
+        updateTask.setDetalhamento(taskDto.getDetalhamento());
+        updateTask.setDataTermino(taskDto.getDataTermino());
+
+        taskRepository.save(updateTask);
     }
 
-    public TaskDto deleteTask (TaskDto taskDto){
-        return null;
+    public void deleteTask (Long id){
+        if(!taskRepository.existsById(id)){
+            throw new TaskException("Id não encontrado" + id);
+        }
+        taskRepository.deleteById(id);
     }
 
 
