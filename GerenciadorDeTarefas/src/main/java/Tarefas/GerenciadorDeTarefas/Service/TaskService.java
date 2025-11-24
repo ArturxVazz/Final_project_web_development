@@ -9,9 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class TaskService {
@@ -70,7 +68,26 @@ public class TaskService {
         taskRepository.deleteById(id);
     }
 
+    public List<TaskDto> listarTodas() {
+        // 1. Busca tudo no banco (retorna Entities)
+        List<TaskEntity> listaEntities = taskRepository.findAll();
 
+        // 2. Cria uma lista vazia para guardar os DTOs
+        List<TaskDto> listaDtos = new ArrayList<>();
 
+        // 3. Converte cada Entity para DTO (Manual, mas didático)
+        for (TaskEntity entity : listaEntities) {
+            TaskDto dto = new TaskDto();
+            dto.setId(entity.getId());
+            dto.setTitulo(entity.getTitulo());
+            dto.setResponsavel(entity.getResponsavel());
+            dto.setDetalhamento(entity.getDetalhamento());
+            dto.setDataTermino(entity.getDataTermino());
+
+            listaDtos.add(dto);
+        }
+
+        return listaDtos;
+    }
 
 }

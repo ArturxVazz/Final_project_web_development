@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/Gerenciador-Tarefas")
 public class TaskController {
@@ -40,4 +42,14 @@ public class TaskController {
 
         return ResponseEntity.ok("A task " + updateTask.getTitulo() + " foi atualizada com sucesso");
      }
+
+    @GetMapping
+    public ResponseEntity<List<TaskDto>> listarTarefas() {
+
+        List<TaskDto> tarefas = taskService.listarTodas();
+
+        return ResponseEntity.ok(tarefas);
+    }
+
+
 }

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Tarefas</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Minhas Tarefas</h1>
+    </header>
+
+    <main>
+        <div id="tasksList" class="cards-container">
+        </div>
+
+        <div class="action-bar">
+            <button id="btnNew" class="btn-primary">+ Nova Tarefa</button>
+        </div>
+    </main>
+</div>
+
+<div id="modalDelete" class="modal hidden">
+    <div class="modal-content">
+        <h3 class="modal-title">Excluir Tarefa?</h3>
+        <p id="msgDelete" class="modal-text">Tem certeza que deseja apagar o item ID X?</p>
+
+        <div class="modal-actions">
+            <button id="btnCancelDelete" class="btn-modal btn-cancel">Cancelar</button>
+            <button id="btnConfirmDelete" class="btn-modal btn-confirm">Sim, excluir</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal" class="modal hidden">
+    <div class="modal-content" style="text-align: left;">
+        <h3 class="modal-title">Detalhes da Tarefa</h3>
+        <form id="taskForm">
+            <input type="hidden" id="id">
+
+            <label>Título</label>
+            <input type="text" id="titulo" required placeholder="O que precisa ser feito?">
+
+            <label>Responsável</label>
+            <input type="text" id="responsavel" required placeholder="Quem vai fazer?">
+
+            <label>Prazo</label>
+            <input type="date" id="dataTermino" required>
+
+            <label>Detalhes</label>
+            <textarea id="detalhamento" rows="3" placeholder="Informações extras..."></textarea>
+
+            <div id="statusMsg" class="status-msg hidden"></div>
+            <div class="modal-actions">
+                <button type="button" id="btnCancel" class="btn-modal btn-cancel">Voltar</button>
+                <button type="submit" id="btnSave" class="btn-modal" style="background:var(--primary); color:white">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer class="fixed-footer">
+    Nome: Artur Silva Vaz / Nome: Vinicius / Turma / 2025
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
