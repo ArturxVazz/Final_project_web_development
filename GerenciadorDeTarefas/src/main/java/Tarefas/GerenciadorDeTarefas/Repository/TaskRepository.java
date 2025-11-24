@@ -12,4 +12,6 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
     Optional<TaskEntity> findByTitulo(String title);
 
     List<TaskEntity> findByResponsavel(String Responsability);
+
+    boolean existsByTituloAndResponsavel(String titulo, String responsavel);
 }

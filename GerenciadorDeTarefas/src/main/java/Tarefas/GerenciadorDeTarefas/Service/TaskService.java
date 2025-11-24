@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -19,6 +20,18 @@ public class TaskService {
     private TaskRepository taskRepository;
 
     public TaskDto adicionarTarefa (TaskDto taskDto){
+
+        if(taskDto.getDataTermino().isBefore(LocalDate.now())){
+            throw new TaskException("A data de término não pode ser no passado");
+        }
+
+        boolean jaExiste=  taskRepository.existsByTituloAndResponsavel(taskDto.getTitulo(),taskDto.getResponsavel());
+
+        if(jaExiste){
+            throw new TaskException("O usuario não pode ter duas tarefas com o mesmo nome");
+        }
+
+
         TaskEntity taskEntity = new TaskEntity();
 
         taskEntity.setTitulo(taskDto.getTitulo());
@@ -35,7 +48,11 @@ public class TaskService {
 
     public void updateTask (Long id, TaskDto taskDto){
 
-        TaskEntity updateTask = taskRepository.findById(id).orElse(null);
+        if(taskDto.getDataTermino().isBefore(LocalDate.now())){
+            throw new TaskException("A data de término não pode ser no passado  ");
+        }
+
+        TaskEntity updateTask = taskRepository.findById(id).orElseThrow(null);
 
         updateTask.setTitulo(taskDto.getTitulo());
         updateTask.setResponsavel(taskDto.getResponsavel());
@@ -49,6 +66,7 @@ public class TaskService {
         if(!taskRepository.existsById(id)){
             throw new TaskException("Id não encontrado" + id);
         }
+
         taskRepository.deleteById(id);
     }
 

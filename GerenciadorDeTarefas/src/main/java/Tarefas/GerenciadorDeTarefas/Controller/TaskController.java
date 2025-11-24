@@ -31,7 +31,7 @@ public class TaskController {
     public ResponseEntity<String> deleteByTask (@PathVariable Long id){
         taskService.deleteTask(id);
 
-        return ResponseEntity.ok("A task " + id + "foi deletada com sucesso");
+        return ResponseEntity.ok("A task " + id + " foi deletada com sucesso");
     }
 
     @PutMapping("/{id}")
