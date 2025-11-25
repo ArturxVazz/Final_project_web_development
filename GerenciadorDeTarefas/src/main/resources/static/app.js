@@ -59,19 +59,31 @@ async function carregarTarefas() {
             const card = document.createElement("div");
             card.className = "task-card";
 
-            card.innerHTML = `
-                <div class="task-header">
-                    <div class="task-title">${t.titulo}</div>
-                    ${badgeHtml}
-                </div>
-                <div class="task-meta">👤 ${t.responsavel}</div>
-                <div class="task-meta">📅 ${t.dataTermino}</div>
-                <div class="task-desc">${t.detalhamento || '<i>Sem descrição.</i>'}</div>
-                <div class="card-actions">
-                    <button class="btn-card btn-alterar" onclick="prepararEdicao(${t.id})">Editar</button>
-                    <button class="btn-card btn-excluir" onclick="confirmarExclusao(${t.id})">Excluir</button>
-                </div>
-            `;
+            // CORREÇÃO 1: No botão Excluir, passamos o ID E o Título (entre aspas simples)
+           // HTML DO CARD MODERNO
+                       card.innerHTML = `
+                           <div class="task-header">
+                               <div class="task-title">${t.titulo}</div>
+                               ${badgeHtml}
+                           </div>
+
+                           <div class="task-meta">
+                               👤 ${t.responsavel}
+                           </div>
+                           <div class="task-meta">
+                               📅 ${t.dataTermino}
+                           </div>
+
+                           <div class="task-desc">
+                               ${t.detalhamento || '<i>Sem descrição.</i>'}
+                           </div>
+
+                           <div class="card-actions">
+                               <button class="btn-card btn-alterar" onclick="prepararEdicao(${t.id})">Editar</button>
+
+                               <button class="btn-card btn-excluir" onclick="confirmarExclusao(${t.id}, '${t.titulo}')">Excluir</button>
+                           </div>
+                       `;
             divLista.appendChild(card);
         });
     } catch (erro) {
@@ -88,16 +100,12 @@ if (btnNew) {
     btnNew.onclick = () => {
         form.reset();
         document.getElementById("id").value = "";
-
-        // --- FAXINA COMPLETA (Adicionado aqui também) ---
         const msgDiv = document.getElementById("statusMsg");
         if(msgDiv) {
             msgDiv.classList.add("hidden");
             msgDiv.classList.remove("status-success", "status-error");
             msgDiv.innerText = "";
         }
-        // ------------------------------------------------
-
         modalForm.classList.remove("hidden");
     };
 }
@@ -137,7 +145,6 @@ if (form) {
             });
 
             if (res.ok) {
-                // SUCESSO
                 mostrarMensagem("Salvo com sucesso!", false);
                 setTimeout(() => {
                     modalForm.classList.add("hidden");
@@ -146,7 +153,6 @@ if (form) {
                     if(msgDiv) msgDiv.classList.add("hidden");
                 }, 1500);
             } else {
-                // ERRO
                 const text = await res.text();
                 let msgFinal = "";
 
@@ -186,7 +192,6 @@ window.prepararEdicao = async (id) => {
             document.getElementById("detalhamento").value = tarefa.detalhamento;
             document.getElementById("dataTermino").value = formatarDataParaHtml(tarefa.dataTermino);
 
-            // --- FAXINA AO EDITAR ---
             const msgDiv = document.getElementById("statusMsg");
             if(msgDiv) {
                 msgDiv.classList.add("hidden");
@@ -202,9 +207,12 @@ window.prepararEdicao = async (id) => {
 };
 
 // --- EXCLUSÃO ---
-window.confirmarExclusao = (id) => {
+
+// CORREÇÃO 2: Agora a função recebe o ID e o Título
+window.confirmarExclusao = (id, titulo) => {
     idParaExcluir = id;
-    document.getElementById("msgDelete").innerText = `Tem certeza que deseja apagar a tarefa ${id}?`;
+    // Aqui usamos o título que veio como parâmetro
+    document.getElementById("msgDelete").innerText = `Tem certeza que deseja apagar a tarefa "${titulo}"?`;
     modalDelete.classList.remove("hidden");
 };
 
@@ -214,9 +222,11 @@ if (btnConfirmDelete) {
         if (idParaExcluir) {
             try {
                 const res = await fetch(`${API_URL}/${idParaExcluir}`, { method: "DELETE" });
-                if (res.ok) carregarTarefas();
-                else alert("Erro ao excluir.");
-
+                if (res.ok) {
+                    carregarTarefas();
+                } else {
+                    alert("Erro ao excluir.");
+                }
                 modalDelete.classList.add("hidden");
                 idParaExcluir = null;
             } catch (error) { console.error(error); }
